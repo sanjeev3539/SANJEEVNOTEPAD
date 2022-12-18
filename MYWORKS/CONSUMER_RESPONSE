@@ -1,0 +1,114 @@
+CREATE or replace table SS_CONSUMER_COMPLAINTS
+( DATE_RECEIVED STRING,
+PRODUCT_NAME VARCHAR2(50),
+SUB_PRODUCT VARCHAR2(100),
+ISSUE VARCHAR2(100),
+SUB_ISSUE VARCHAR2(100),
+CONSUMER_COMPLAINT_NARRATIVE string,
+Company_Public_Response STRING,
+Company VARCHAR(100),
+State_Name CHAR(4),
+Zip_Code string,
+Tags VARCHAR(40),
+Consumer_Consent_Provided CHAR(25),
+Submitted_via STRING,
+Date_Sent_to_Company STRING,
+Company_Response_to_Consumer VARCHAR(40),
+Timely_Response CHAR(4),
+CONSUMER_DISPUTED CHAR(4),
+COMPLAINT_ID NUMBER(12,0) NOT NULL PRIMARY KEY
+);
+
+describe table SS_CONSUMER_COMPLAINTS;
+
+select * from SS_CONSUMER_COMPLAINTS;
+
+SELECT CONCAT(PRODUCT_NAME,SUB_PRODUCT)FROM SS_CONSUMER_COMPLAINTS;
+
+CREATE OR REPLACE VIEW CONSUMER_COMPLAINTS_VIEW AS
+SELECT DATE_RECEIVED,PRODUCT_NAME,SUB_PRODUCT,ISSUE,COMPANY,STATE_NAME,ZIP_CODE,SUBMITTED_VIA,COMPLAINT_ID,
+CONCAT(STATE_NAME,ZIP_CODE) AS STATE_CODE FROM SS_CONSUMER_COMPLAINTS;
+
+SELECT * FROM CONSUMER_COMPLAINTS_VIEW;
+
+DESCRIBE TABLE CONSUMER_COMPLAINTS_VIEW;
+
+CREATE OR REPLACE VIEW SS_COMPLAINTS_VIEW AS
+SELECT* FROM SS_CONSUMER_COMPLAINTS
+CONCAT(PRODUCT_NAME,SUB_PRODUCT) WHERE SUB_ISSUE IS NOT NULL
+OR CONSUMER_COMPLAINT_NARRATIVE IS NOT NULL
+OR COMPANY_PUBLIC_RESPONSE IS NOT NULL OR TAGS IS NOT NULL;
+
+
+SELECT DISTINCT SUBMITTED_VIA FROM SS_CONSUMER_COMPLAINTS;
+
+select *,
+        CASE WHEN SUBMITTED_VIA IN('Referral','postal mail','email') then 'outbound'
+             WHEN SUBMITTED_VIA IN('Phone','Web') then 'inboud'
+             ELSE 'electronics'
+        end as submission_tyoe
+from SS_CONSUMER_COMPLAINTS;
+
+select *,
+        CASE WHEN PRODUCT_NAME LIKE '%LOAN' OR PRODUCT_NAME LIKE '%loan' THEN 'LOAN'
+        WHEN PRODUCT_NAME IN('Bank account or service','Mortgage','Debt collection','Credit reporting','Money Trasfers') then 'service'
+        else 'others'
+        END AS LOAN_TYPES
+from SS_CONSUMER_COMPLAINTS;
+
+select *,
+        CASE WHEN UPPER(PRODUCT_NAME) LIKE '%Loan' THEN 'LOAN'
+        WHEN PRODUCT_NAME IN('Bank account or service','Mortgage','Debt collection','Credit reporting','Money Trasfers') then 'service'
+        else 'others'
+        END AS LOAN_TYPES
+from SS_CONSUMER_COMPLAINTS;
+
+SELECT *,
+           CASE WHEN SUB_PRODUCT='I do not know' OR SUB_PRODUCT IS NULL THEN 'NA'
+           WHEN lower(SUB_PRODUCT) LIKE '%card%' THEN 'CARD'
+           WHEN lower(SUB_PRODUCT) LIKE '%loan%' THEN 'LOAN'
+           WHEN lower(SUB_PRODUCT) LIKE '%mortgage%' THEN 'MORTGAGE'
+           ELSE 'SUB_PRODUCTS'
+           END AS SUB_PRODUCT_TYPES
+FROM SS_CONSUMER_COMPLAINTS;
+
+select distinct SUBMITTED_VIA from SS_CONSUMER_COMPLAINTS;
+
+SELECT *,
+        CASE WHEN COMPANY_RESPONSE_TO_CONSUMER = 'Closed with explanation' THEN 'EXPLAINED'
+        WHEN COMPANY_RESPONSE_TO_CONSUMER = 'Closed with monetary relief' THEN 'MONETARY RELIEF PROVIDED'
+        WHEN COMPANY_RESPONSE_TO_CONSUMER IN ('Closed','Closed with non-monetary relief') THEN 'CLOSED'
+        ELSE 'UNTIMELY RESPONSE'
+        END AS RESPENSE_CLASSIFIED
+FROM SS_CONSUMER_COMPLAINTS;
+
+use database ss_assignment_1;
+
+CREATE OR REPLACE VIEW SS_COMPANY_RESPONSE AS
+SELECT DATE_RECEIVED,PRODUCT_NAME,SUB_PRODUCT,ISSUE,COMPANY,STATE_NAME,ZIP_CODE,SUBMITTED_VIA,
+
+           CASE WHEN SUBMITTED_VIA IN('Referral','postal mail','email') then 'outbound'
+                WHEN SUBMITTED_VIA IN('Phone','Web') then 'inbound'
+                ELSE 'electronics'
+           END AS submission_tyoe,
+  
+        CASE WHEN PRODUCT_NAME LIKE '%LOAN' OR PRODUCT_NAME LIKE '%loan' THEN 'LOAN'
+             WHEN PRODUCT_NAME IN('Bank account or service','Mortgage','Debt collection','Credit reporting','Money Trasfers') then 'service'
+             else 'others'
+        END AS LOAN_TYPES,
+        
+        CASE WHEN SUB_PRODUCT='I do not know' OR SUB_PRODUCT IS NULL THEN 'NA'
+             WHEN lower(SUB_PRODUCT) LIKE '%card%' THEN 'CARD'
+             WHEN lower(SUB_PRODUCT) LIKE '%loan%' THEN 'LOAN'
+             WHEN lower(SUB_PRODUCT) LIKE '%mortgage%' THEN 'MORTGAGE'
+             ELSE 'SUB_PRODUCTS'
+        END AS SUB_PRODUCT_TYPES,
+           
+        CASE WHEN COMPANY_RESPONSE_TO_CONSUMER = 'Closed with explanation' THEN 'EXPLAINED'
+             WHEN COMPANY_RESPONSE_TO_CONSUMER = 'Closed with monetary relief' THEN 'MONETARY RELIEF PROVIDED'
+             WHEN COMPANY_RESPONSE_TO_CONSUMER IN ('Closed','Closed with non-monetary relief') THEN 'CLOSED'
+             ELSE 'UNTIMELY RESPONSE'
+        END AS RESPENSE_CLASSIFIED
+from SS_CONSUMER_COMPLAINTS;
+        
+SELECT * FROM SS_COMPANY_RESPONSE;
