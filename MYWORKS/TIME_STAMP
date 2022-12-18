@@ -1,0 +1,33 @@
+select current_date;
+SELECT CURRENT_TIMESTAMP;
+SELECT CURRENT_TIME;
+SELECT CONVERT_TIMEZONE('GMT',CURRENT_TIMESTAMP) AS GMT_TIMEZONE;
+SELECT CONVERT_TIMEZONE('UTC',CURRENT_TIMESTAMP) AS UTC_TIMEZONE;
+SELECT CONVERT_TIMEZONE('AMERICA/LOS_ANGELES',CURRENT_TIMESTAMP) AS AMERICA_TIMEZONE;
+
+select current_timestamp;
+select day(current_timestamp()),
+hour(current_timestamp()),
+minute(current_timestamp()),
+second(current_timestamp()),
+month(current_timestamp());
+
+select date_trunc('week',current_date) as week_november;
+
+select week(current_date)as week_from_year;
+select month(current_date)as month_from_year;
+select day(current_date)as date_from_year;
+
+select week(date('1984-05-30'))as week_from_year;
+
+SELECT LAST_DAY(DATE'1984-05-30');
+SELECT LAST_DAY(DATE'1984-05-30'- INTERVAL '1 MONTH');
+
+SELECT DAY(DATE('2022-11-27')-INTERVAL '5 DAYS');
+
+SELECT TO_CHAR(TO_DATE('1984-05-30'),'DD-MM-YYYY')AS DATE_DD_MM_YYYY;
+SELECT TO_CHAR(TO_DATE('1984-05-30'),'DY-DD-MM-YY')AS DATE_DD_MM_YYYY;
+SELECT DAYNAME('1984-05-30');
+SELECT DATEDIFF('YEAR','1984-05-30',CURRENT_DATE);
+SELECT DATEDIFF('MONTH','1984-05-30',CURRENT_DATE);
+SELECT DATEDIFF('DAY','1984-05-30',CURRENT_DATE);
