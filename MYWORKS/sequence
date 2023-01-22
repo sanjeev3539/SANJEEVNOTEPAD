@@ -1,0 +1,68 @@
+use database ss_joins_1;
+create or replace table ss_colour as
+select name
+from (values ('red'),('blue'),('green'),('yellow')) ss_colour (name);
+
+describe table ss_colour;
+select * from ss_colour;
+
+create or replace table ss_colour_1 like ss_colour;
+
+alter table ss_colour_1
+add column id int identity(1,1);--( )gives default like (1,1) start and increment type
+
+insert into ss_colour_1(name)
+select name from ss_colour;
+
+-- if table is large--
+
+create or replace table sanjeev like "SNOWFLAKE_SAMPLE_DATA"."TPCH_SF1"."CUSTOMER";
+describe table sanjeev;
+
+create or replace sequence ss_seq
+start=1
+increment=1;
+describe sequence ss_seq;
+
+select * from ss_colour_1;
+
+alter table sanjeev
+add column id int identity(1,1);
+
+select * from sanjeev;
+
+insert into sanjeev 
+select *,row_number() over (order by null)
+from "SNOWFLAKE_SAMPLE_DATA"."TPCH_SF1"."CUSTOMER";
+
+insert into sanjeev(c_custkey, c_name, c_address, c_nationkey, c_phone, c_acctbal, c_mktsegment, c_comment)
+values (219874, 'Customer#000219874', 'sadhjekj', 9, '19-505-461-2873', 999.99, 'asjdasgdj', 'sdadtyhkjer');
+
+select * from sanjeev order by id;
+
+-- to 1 number is coming
+--so we use sequence to eliminate this
+
+drop table sanjeev;
+
+create or replace table sanjeev like "SNOWFLAKE_SAMPLE_DATA"."TPCH_SF1"."CUSTOMER";
+create or replace sequence ss_seq
+start=1
+increment=1;
+
+alter table sanjeev
+add column id1 int default ss_seq.NEXTVAL;
+
+describe table sanjeev;
+select get_ddl('table','sanjeev');
+
+insert into sanjeev 
+select *,ss_seq.nextval,ss_seq.NEXTVAL
+from "SNOWFLAKE_SAMPLE_DATA"."TPCH_SF1"."CUSTOMER";
+
+SELECT * FROM SANJEEV ORDER BY ID;
+
+insert into sanjeev(c_custkey, c_name, c_address, c_nationkey, c_phone, c_acctbal, c_mktsegment, c_comment)
+values (219874, 'Customer#000219874', 'sadhjekj', 9, '19-505-461-2873', 999.99, 'asjdasgdj', 'sdadtyhkjer');
+
+SELECT * FROM SANJEEV WHERE C_CUSTKEY = 219874;
