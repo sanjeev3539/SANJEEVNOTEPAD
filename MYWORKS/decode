@@ -1,0 +1,42 @@
+use database ss_joins_1;
+create table d (column1 integer);
+insert into d (column1) values 
+    (1),
+    (2),
+    (null),
+    (4);
+select * from d;
+
+select column1, decode(column1, 
+                       1, 'one', 
+                       2, 'two', 
+                       null, '-NULL-', 
+                       'other'
+                      ) as decode_result
+    from d;
+    
+create or replace table ss_decode(
+sid int not null primary key,
+sname varchar(255)not null,
+sal decimal(10,2) not null,
+age int);
+
+insert into ss_decode(sid,sname,sal,age)
+values	(1,'mahi',12,40),
+		(2,'kohli',14,33),
+		(3,'DK',6.25,33),
+		(4,'warner',6.75,33),
+		(5,'rahul',16,29),
+		(6,'pandya',14,27);
+        
+select * from ss_decode;
+
+SELECT Sname, sid, sal,
+decode(sid,1,1.5*sal,2,4*sal,3,9*sal,4,10.25*sal,sal)
+"REVISED SALARY"
+from ss_decode;
+
+SELECT Sid, Sname, Sal, Age,
+DECODE (sid, 1, 2 * sid * sal,2, 3 * sid * sal,3, 5 * sid * sal,4, 10 * sid * sal,5, 12 * sid * sal,6, 15 * sid * sal,sal/2)
+"UPGRADED SALARY"
+from ss_decode;
