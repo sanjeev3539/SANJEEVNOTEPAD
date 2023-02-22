@@ -1,0 +1,63 @@
+use database ss_joins_1;
+
+create or replace table ss_agents(
+id int not null primary key,
+first_name varchar(255),
+last_name varchar(255),
+experience int
+);
+
+create or replace table ss_customers(
+id int not null primary key,
+first_name varchar(255),
+last_name varchar(255),
+email varchar
+);
+
+drop table ss_sales;
+create or replace table ss_sales(
+id int not null,
+house_id int,
+date varchar,
+first_name varchar(255),
+last_name varchar(255),
+customer_id varchar(255) primary key,
+price decimal
+);
+select * from ss_sales;
+insert into ss_agents
+values(1,'kate','white',5),
+(2,'melissa','brown',2),
+(3,'alexandr','mcgregor',3),
+(4,'sophia','scott',3),
+(5,'steven','black',1),
+(6,'maria','scott',1);
+
+
+insert into ss_customers
+values (11,'Xaviera','Lopez','xaviera111111@gmail.com'),
+(12,'Gabriel','Cumberly','gabrie111111@gmail.com'),
+(13,'Elisabeth','Stevens','elisabeth111111@gmail.com'),
+(14,'Oprah','Winfrey','oprah111111@gmail.com'),
+(15,'Ivan','Lee','ivan111111@gmail.com');
+select * from ss_customers;
+
+insert into ss_sales
+values(101,1012,'2021-11-03','Kate','White',14,1200000),
+(102,2134,'2021-12-06','Sophia','Scott',12,950000),
+(103,1015,'2021-12-10','Maria','Scott',13,800000),
+(104,2013,'2021-12-12','Alexand','McGregor',15,1350000),
+(105,2112,'2021-12-12','Alexand','McGregor',15,1450000),
+(106,1010,'2022-01-10','Steven','Black',11,1500000);
+
+SELECT
+    a1.first_name as agent1_first_name,
+    a1.last_name as agent1_last_name,
+    a1.experience as agent1_experience,
+    a2.first_name as agent2_first_name,
+    a2.last_name as agent2_last_name,
+    a2.experience as agent2_experience
+FROM ss_agents a1
+JOIN ss_agents a2
+ON a1.id < a2.id
+ORDER BY a1.id;
